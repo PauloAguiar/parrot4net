@@ -11,3 +11,15 @@ C:\dev\prj\parrot-net\client\Parrot4Net\bin\Debug\log4net.xml
 C:\dev\prj\parrot-net\client\Parrot4Net\bin\Debug\StarkSoftProxy.pdb
 C:\dev\prj\parrot-net\client\Parrot4Net\obj\Debug\Parrot4Net.exe
 C:\dev\prj\parrot-net\client\Parrot4Net\obj\Debug\Parrot4Net.pdb
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Debug\Parrot4Net.exe.config
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\obj\Debug\Parrot4Net.csprojResolveAssemblyReference.cache
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Debug\Parrot4Net.exe
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Debug\Parrot4Net.pdb
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Debug\Meebey.SmartIrc4net.dll
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Debug\log4net.dll
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Debug\StarkSoftProxy.dll
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Debug\Meebey.SmartIrc4net.pdb
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Debug\log4net.xml
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Debug\StarkSoftProxy.pdb
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\obj\Debug\Parrot4Net.exe
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\obj\Debug\Parrot4Net.pdb

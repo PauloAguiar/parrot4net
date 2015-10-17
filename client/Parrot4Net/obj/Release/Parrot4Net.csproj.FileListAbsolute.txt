@@ -1,0 +1,8 @@
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Release\Parrot4Net.exe.config
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Release\Parrot4Net.exe
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Release\Parrot4Net.pdb
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Release\Meebey.SmartIrc4net.dll
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Release\StarkSoftProxy.dll
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\obj\Release\Parrot4Net.csprojResolveAssemblyReference.cache
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\obj\Release\Parrot4Net.exe
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\obj\Release\Parrot4Net.pdb
