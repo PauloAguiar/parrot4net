@@ -15,8 +15,12 @@ namespace Parrot4Net
         static void Main(string[] args)
         {
             irc = new IrcClient();
-            irc.OnConnected += (Object o, EventArgs e) => { Console.WriteLine("Connecting"); };
-            irc.OnReadLine += (Object o, ReadLineEventArgs e) => { irc.WriteLine("I'm alive"); };
+            irc.OnConnected += (Object o, EventArgs e) => { Console.WriteLine("Connected"); };
+            irc.OnReadLine += (Object o, ReadLineEventArgs e) => {
+                string command = e.Line.Split(' ')[0];
+                if (command.Equals("PING")) { irc.WriteLine("Porra Doente!"); }
+                else { Console.WriteLine(e.Line.ToString()); }
+            };
             //irc.OnChannelMessage += OnMessage;
             //irc.OnOp += OnOp;
             //irc.OnDeop += OnDeOp;
@@ -32,7 +36,6 @@ namespace Parrot4Net
             irc.AutoRejoin = true;
             string server = "192.168.1.9";
             int port = 6667;
-            string channel = "#smartirc-test";
             try
             {
                 irc.Connect(server, port);
@@ -44,8 +47,16 @@ namespace Parrot4Net
 
             try
             {
-                irc.Login("SmartIRC", "SmartIrc4net Test Bot");
+                irc.Login("solteirao", "Galactic Overlord");
+                //irc.x`Login("twentysevencentimeters", "Galactic Overlord");
+                string channel = "#xupaflash";
                 irc.RfcJoin(channel);
+                for (int i = 0; i < 3; i++)
+                {
+                    //irc.SendMessage(SendType.Message, channel, "Message Porra (" + i.ToString() + ")");
+                    //irc.SendMessage(SendType.Action, channel, "Action Doente (" + i.ToString() + ")");
+                    //irc.SendMessage(SendType.Notice, channel, "Notice xupa! (" + i.ToString() + ")");
+                }
                 new Thread(new ThreadStart(ReadCommands)).Start();
                 irc.Listen();
                 Console.WriteLine("Disconnected");
@@ -65,7 +76,6 @@ namespace Parrot4Net
 
         }
 
-
         public static void Exit()
         {
             // we are done, lets exit...
@@ -75,10 +85,34 @@ namespace Parrot4Net
 
         public static void ReadCommands()
         {
-            for (int i = 1; i < 4; i++)
+            while (true)
             {
-                irc.WriteLine(i.ToString() + ": " + Console.ReadLine());
+                string cmd = System.Console.ReadLine();
+                if (cmd.StartsWith("/list"))
+                {
+                    int pos = cmd.IndexOf(" ");
+                    string channel = null;
+                    if (pos != -1)
+                    {
+                        channel = cmd.Substring(pos + 1);
+                    }
+
+                    IList<ChannelInfo> channelInfos = irc.GetChannelList(channel);
+                    Console.WriteLine("channel count: {0}", channelInfos.Count);
+                    foreach (ChannelInfo channelInfo in channelInfos)
+                    {
+                        Console.WriteLine("channel: {0} user count: {1} topic: {2}",
+                                            channelInfo.Channel,
+                                            channelInfo.UserCount,
+                                            channelInfo.Topic);
+                    }
+                }
+                else
+                {
+                    irc.WriteLine(cmd);
+                }
             }
+                
             irc.Disconnect();
         }
     }
