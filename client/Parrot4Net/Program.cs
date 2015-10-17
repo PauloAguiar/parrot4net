@@ -15,8 +15,8 @@ namespace Parrot4Net
         static void Main(string[] args)
         {
             irc = new IrcClient();
-            irc.OnConnected += (Object o, EventArgs e) => { Console.WriteLine("Connectando"); };
-            //irc.OnReadLine += OnReadLine;
+            irc.OnConnected += (Object o, EventArgs e) => { Console.WriteLine("Connecting"); };
+            irc.OnReadLine += (Object o, ReadLineEventArgs e) => { irc.WriteLine("I'm alive"); };
             //irc.OnChannelMessage += OnMessage;
             //irc.OnOp += OnOp;
             //irc.OnDeop += OnDeOp;
@@ -48,16 +48,18 @@ namespace Parrot4Net
                 irc.RfcJoin(channel);
                 new Thread(new ThreadStart(ReadCommands)).Start();
                 irc.Listen();
-                irc.Disconnect();
+                Console.WriteLine("Disconnected");
+                Exit();
             }
             catch (ConnectionException)
             {
+                Console.WriteLine("Connection error");
                 Exit();
             }
             catch (Exception e)
             {
-                System.Console.WriteLine("Error occurred! Message: " + e.Message);
-                System.Console.WriteLine("Exception: " + e.StackTrace);
+                Console.WriteLine("Error occurred! Message: " + e.Message);
+                Console.WriteLine("Exception: " + e.StackTrace);
                 Exit();
             }
 
@@ -67,16 +69,17 @@ namespace Parrot4Net
         public static void Exit()
         {
             // we are done, lets exit...
-            System.Console.WriteLine("Exiting...");
-            System.Environment.Exit(0);
+            Console.WriteLine("Exiting...");
+            Environment.Exit(0);
         }
 
         public static void ReadCommands()
         {
-            while (true)
+            for (int i = 1; i < 4; i++)
             {
-                irc.WriteLine(System.Console.ReadLine());
+                irc.WriteLine(i.ToString() + ": " + Console.ReadLine());
             }
+            irc.Disconnect();
         }
     }
 }
