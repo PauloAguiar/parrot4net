@@ -1,6 +1,0 @@
-C:\dev\prj\parrot-net\client\ConsoleApplication1\bin\Debug\ConsoleApplication1.exe.config
-C:\dev\prj\parrot-net\client\ConsoleApplication1\bin\Debug\ConsoleApplication1.exe
-C:\dev\prj\parrot-net\client\ConsoleApplication1\bin\Debug\ConsoleApplication1.pdb
-C:\dev\prj\parrot-net\client\ConsoleApplication1\obj\Debug\ConsoleApplication1.csprojResolveAssemblyReference.cache
-C:\dev\prj\parrot-net\client\ConsoleApplication1\obj\Debug\ConsoleApplication1.exe
-C:\dev\prj\parrot-net\client\ConsoleApplication1\obj\Debug\ConsoleApplication1.pdb
