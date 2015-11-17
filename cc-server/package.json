@@ -11,5 +11,15 @@
     "url": "https;//github.com/PauloAguiar/parrot4net"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "bower": "^1.6.5",
+    "dateformat": "^1.0.11",
+    "ejs": "^2.3.4",
+    "express": "^4.13.3",
+    "morgan": "^1.6.1",
+    "node-storage": "0.0.7",
+    "slate-irc": "^0.8.1"
+  }
 }

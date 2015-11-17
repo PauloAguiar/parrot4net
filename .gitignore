@@ -1,3 +1,14 @@
 # Folders
 deps/
 cc-server/node_modules/ircdjs/node_modules/
+cc-server/node_modules/bower/
+cc-server/node_modules/express/
+cc-server/node_modules/dateformat/node_modules/
+cc-server/node_modules/ejs/
+cc-server/node_modules/dateformat/
+cc-server/node_modules/morgan/
+cc-server/node_modules/body-parser/
+cc-server/node_modules/node-storage/
+cc-server/bower_components/
+cc-server/node_modules/slate-irc/
+cc-server/info*

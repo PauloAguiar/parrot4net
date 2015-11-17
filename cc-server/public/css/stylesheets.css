@@ -1,0 +1,13 @@
+body {
+    padding-top: 50px;
+}
+
+.item-list {
+    font-size: 14px;
+    margin: 0px;
+    border-left: 3px solid rgb(255, 112, 0) !important;
+    padding: 5px;
+    padding-left:10px;
+    margim-bottom:2px;
+    background-color: rgb(247, 247, 214);
+}

@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML>
+    <% include partials/header %>
+    <BODY>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-8">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <b> Server@<%= irc_hostname + ':' + irc_port%></b>
+                                    </div>
+                                    <div class="panel-body"  style="background:url('http://subtlepatterns.com/patterns/geometry2.png');height: 300px; }">
+                                        <% bot_list.forEach(function(bot) { %>
+                                            <div class="clearfix"><blockquote class="item-list pull-left"><%= bot.nick + '(' + bot.remoteAddress + ')' %></blockquote></div>
+                                        <% }); %>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="panel panel-warning">
+                                    <div class="panel-heading">
+                                        <b>Known C&amp;C Server List</b>
+                                    </div>
+                                    <div class="panel-body" style="background:url('http://subtlepatterns.com/patterns/geometry2.png');height: 300px; }">
+                                        <% server_list.forEach(function(server) { %>
+                                            <div class="clearfix">
+                                                <blockquote class="item-list pull-left">
+                                                    <%= server.hostname + ':' + server.port %><%= server.client !== undefined ? '(connected)' : ''%>
+                                                    <form action="/ccserver/remove" method="post">
+                                                        <input type="hidden" name="address" value="<%= server.hostname + ':' + server.port %>">
+                                                        <button type="submit" class="btn btn-primary btn-xs">Remove</button>
+                                                    </form>
+                                                </blockquote>
+                                            </div>
+                                        <% }); %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <form action="/attack" method="post">
+                        <div class="form-group">
+                            <label for="inputAddress">Target</label>
+                            <input type="text" class="form-control" name="target" placeholder="www.google.com">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Nuke!</button>
+                    </form>
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                            Uptime: <%= uptime %>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h3>Status</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="list-group">
+                                <div class="list-group-item">
+                                    <h4 class="list-group-item-heading">
+                                    Attack
+                                    </h4>
+                                    <p class="list-group-item-text">
+                                        <span class="label label-danger">None</span>
+                                    </p>
+                                </div>
+                                <div class="list-group-item">
+                                    <h4 class="list-group-item-heading">
+                                    Bots
+                                    </h4>
+                                    <p class="list-group-item-text">
+                                        <span class="label <%= bot_list.length > 0 ? 'label-success' : 'label-danger' %>"><%= bot_list.length %> Connected</span>
+                                    </p>
+                                </div>
+                                <div class="list-group-item">
+                                    <h4 class="list-group-item-heading">
+                                    C&amp;C Servers
+                                    </h4>
+                                    <p class="list-group-item-text">
+                                        <span class="label label-success"><%= servers_on %> Online</span>
+                                        <span class="label label-danger"><%= servers_off %> Offline</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <form action="/ccserver/add" method="post">
+                        <div class="form-group">
+                            <label for="inputAddress">C&amp;C Server Address</label>
+                            <input type="text" class="form-control" name="address" placeholder="www.google.com">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <% include partials/footer %>
+    </BODY>
+</HTML>
