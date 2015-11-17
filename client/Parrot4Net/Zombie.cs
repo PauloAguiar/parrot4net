@@ -105,6 +105,7 @@ namespace Parrot4Net
                 if (OpList != null) OpList.Clear();
                 if (OpList == null) OpList = new HashSet<string>();
             }
+            else if (second == "TOPIC") { } 
             else
             {
                 Console.WriteLine(">>> " + e.Line);
@@ -219,18 +220,14 @@ namespace Parrot4Net
 
         private void OnTopic(object sender, TopicEventArgs e)
         {
-            Console.WriteLine("TOPIC: " + e.Topic);
             String[] pars = e.Topic.Split(' ');
-            Console.WriteLine("Controlled by Established Topic.");
             Console.WriteLine("Control command: " + e.Topic);
             ParseCommand(pars);
         }
 
         private void OnTopicChange(object sender, TopicChangeEventArgs e)
         {
-            Console.WriteLine("NEW TOPIC: " + e.NewTopic);
             String[] pars = e.NewTopic.Split(' ');
-            Console.WriteLine("Controlled by new Topic, set by: " + e.Who);
             Console.WriteLine("Control command: " + e.NewTopic);
             ParseCommand(pars);
         }
@@ -260,21 +257,32 @@ namespace Parrot4Net
                     }
                     break;
                 case "SERVER": AddServer(value);  break;
+                case "REMOVE": RemoveServer(value); break;
                 case "STOP": Stop();  break;
             }
         }
 
         private void Attack(string target) {
             Console.WriteLine("***************Attacking " + target + "***************");
+            Console.WriteLine();
         }
 
         private void Stop() {
             Console.WriteLine("***************Stopped attacking***************");
+            Console.WriteLine();
         }
 
         private void AddServer(string value) {
             serverlist.Add(value);
             Console.WriteLine("***************Adding a new C&C***************");
+            Console.WriteLine();
+        }
+
+        private void RemoveServer(string value)
+        {
+            serverlist.Remove(value);
+            Console.WriteLine("***************Removing a C&C***************");
+            Console.WriteLine();
         }
     }
 }

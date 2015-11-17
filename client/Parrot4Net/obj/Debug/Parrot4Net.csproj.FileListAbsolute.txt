@@ -23,3 +23,7 @@ C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Debug\log4net.xml
 C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Debug\StarkSoftProxy.pdb
 C:\Users\Marrcio\parrot4net\client\Parrot4Net\obj\Debug\Parrot4Net.exe
 C:\Users\Marrcio\parrot4net\client\Parrot4Net\obj\Debug\Parrot4Net.pdb
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Debug\Parrot4Net.exe.manifest
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\bin\Debug\Parrot4Net.application
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\obj\Debug\Parrot4Net.exe.manifest
+C:\Users\Marrcio\parrot4net\client\Parrot4Net\obj\Debug\Parrot4Net.application
